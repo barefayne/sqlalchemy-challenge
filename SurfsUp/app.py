@@ -39,9 +39,7 @@ def welcome():
         f"Available Routes:<br/>"
         f"/api/v1.0/precipitation<br/>"
         f"/api/v1.0/stations<br/>"
-        f"/api/v1.0/tobs<br/>"
-        f"/api/v1.0/[start_date format:yyyy-mm-dd]<br/>"
-        f"/api/v1.0/[start_date format:yyyy-mm-dd]/[end_date format:yyyy-mm-dd]"
+        f"/api/v1.0/tobs"
     )
 
 
@@ -50,9 +48,10 @@ def precipitation():
     # Create our session (link) from Python to the DB
     session = Session(engine)
 
-    """Return a JSON list of all precipitation"""
+    """Return a JSON list of last 12 months precipitation"""
     # Query all precipitation
-    results = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date >= "2016-08-24").all()
+    results = session.query(Measurement.date, Measurement.prcp).\
+        filter(Measurement.date >= "2016-08-24").all()
 
     session.close()
 
@@ -91,7 +90,8 @@ def tobs():
 
     """Return a list of tobs"""
     # Query the last 12 months of temperature observation data for the most active station
-    results = session.query(Measurement.station, Measurement.prcp, Measurement.date,Measurement.tobs)\
+    results = session.query(Measurement.station, Measurement.prcp, \
+                            Measurement.date,Measurement.tobs)\
     .filter(Measurement.date >= '2016-08-23')\
     .filter(Measurement.station == 'USC00519281')\
     .all()
